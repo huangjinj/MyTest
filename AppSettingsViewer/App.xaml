@@ -1,8 +1,8 @@
 ﻿<Application
-    x:Class="AppSettingsViewer.App"
+    x:Class="AppSettingsEditor.App"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:local="using:AppSettingsViewer"
+    xmlns:local="using:AppSettingsEditor"
     RequestedTheme="Light">
 
 </Application>
