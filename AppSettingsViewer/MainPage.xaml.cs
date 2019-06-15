@@ -6,6 +6,7 @@ using System.Runtime.InteropServices.WindowsRuntime;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.Storage;
+using Windows.UI.Popups;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -23,48 +24,74 @@ namespace AppSettingsEditor
     /// </summary>
     public sealed partial class MainPage : Page
     {
+        AppSettings _curSettings;
         public MainPage()
         {
             this.InitializeComponent();
-            _settingItems = new List<SettingItem>();
-            _settingItems.Add(new SettingItem() { Name = "name1", Value = "value1" });
-            _settingItems.Add(new SettingItem() { Name = "name2", Value = "value2" });
-            _settingItems.Add(new SettingItem() { Name = "name3", Value = "value3" });
+            _curSettings = new AppSettings();
+            this.DataContext = _curSettings;
+            SettingItem.SaveFromUI = true;
+        }
 
-            var localSettings = ApplicationData.Current.LocalSettings;
-            //localSettings.Values["exampleSetting"] = 1;
 
-            foreach (var v in localSettings.Values)
+        private void btn_Refresh_Click(object sender, RoutedEventArgs e)
+        {
+            RefreshSettings();
+        }
+
+        private void btn_Delete_Click(object sender, RoutedEventArgs e)
+        {
+            if(listView.SelectedItem != null)
             {
-                _settingItems.Add(new SettingItem() { Name = v.Key, Value = v.Value.ToString() });
-            }
-
-            foreach (var c in localSettings.Containers)
-            {
-                foreach (var v in c.Value.Values)
+                SettingItem item = listView.SelectedItem as SettingItem;
+                if(item.DeleteItem())
                 {
-                    _settingItems.Add(new SettingItem() { Name = v.Key, Value = v.Value.ToString() });
+                    _curSettings.Settings.Remove(item);
                 }
             }
-
-            this.DataContext = this;
         }
 
-        public string Title
+        private async void btn_Add_Click(object sender, RoutedEventArgs e)
         {
-            get
+            string name = txtName.Text;
+            string value = txtValue.Text;
+            string container = txtContainer.Text;
+            if (string.IsNullOrEmpty(name))
             {
-                return "Root";
+                MessageDialog dialog = new MessageDialog("Key cannot be empty");
+                await dialog.ShowAsync();
+                return;
             }
+
+            object objToAdd = AppSettingsUtil.StringToObject(value);
+            if (SaveValue(name, objToAdd, container))
+                RefreshSettings();
         }
 
-        private List<SettingItem> _settingItems;
-        public IList<SettingItem> Settings
+        bool SaveValue(string key, object value, string container)
         {
-            get
+            var dataContainer = AppSettingsUtil.CreateContainer(container);
+            if (dataContainer != null)
             {
-                return _settingItems;
+                dataContainer.Values[key] = value;
+                return true;
             }
+            return false;
+        }
+
+        private void RefreshSettings()
+        {
+            SettingItem.SaveFromUI = false;
+            _curSettings = new AppSettings();
+            this.DataContext = _curSettings;
+            SettingItem.SaveFromUI = true;
+        }
+
+        private void listView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            SettingItem item = listView.SelectedItem as SettingItem;
+            if(item != null)
+                txtContainer.Text = item.Container;
         }
     }
 }

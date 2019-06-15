@@ -8,38 +8,58 @@
     mc:Ignorable="d">
 
     <Grid Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-        <GridView ItemsSource="{Binding Settings}" Margin="50, 10" IsItemClickEnabled="False" IsHitTestVisible="True" SelectionMode="None">
-            <GridView.ItemTemplate>
-                <DataTemplate>
-                    <Grid HorizontalAlignment="Left" >
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                            <ColumnDefinition Width="*" />
-                            <ColumnDefinition Width="Auto" />
-                        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="50"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" Margin="50,0">
+            <Button x:Name="btn_Refresh" Content="Refresh" Width="68" Click="btn_Refresh_Click"></Button>
+            <Button x:Name="btn_Delete" Margin="30,0,0,0" Width="68" Content="Delete" Click="btn_Delete_Click"></Button>
+            <Button x:Name="btn_Add" Margin="30,0,0,0" Width="68" Content="Add" Click="btn_Add_Click"></Button>
 
-                        <TextBlock Grid.Column="0" Margin="10,0" Text="{Binding Name}"  VerticalAlignment="Center" IsTextSelectionEnabled="True" ></TextBlock>
-                        <TextBlock Grid.Column="1" Margin="20,0" Text="{Binding DataType}"  VerticalAlignment="Center" ></TextBlock>
-                        <TextBox Grid.Column="2"  Margin="10,0" Text="{Binding Value, Mode=TwoWay}" VerticalAlignment="Center"></TextBox>
+            <TextBlock  Margin="20, 0" Text="Name: " VerticalAlignment="Center"/>
+            <TextBox x:Name="txtName" VerticalAlignment="Center"/>
+            <TextBlock Margin="20, 0" Text="Value: " VerticalAlignment="Center"/>
+            <TextBox x:Name="txtValue" VerticalAlignment="Center"/>
+
+            <TextBlock  Margin="20, 0" Text="Container: " VerticalAlignment="Center"/>
+            <TextBox x:Name="txtContainer" VerticalAlignment="Center"/>
+
+        </StackPanel>
+        <ListView x:Name="listView" Grid.Row="1" ItemsSource="{Binding Settings, Mode=TwoWay}" Margin="20, 10" IsItemClickEnabled="False" IsHitTestVisible="True" 
+                  SelectionMode="Single" SelectionChanged="listView_SelectionChanged">
+            <ListView.ItemTemplate>
+                <DataTemplate>
+                    <Grid HorizontalAlignment="Left"  >
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="200" />
+                            <ColumnDefinition Width="100" />
+                            <ColumnDefinition Width="250" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock Grid.Column="0" Margin="10,0" Text="{Binding Container}" HorizontalAlignment="Left" VerticalAlignment="Center" ToolTipService.ToolTip="{Binding Container}"
+                                   IsTextSelectionEnabled="True" ></TextBlock>
+                        <TextBlock Grid.Column="1" Margin="10,0" Text="{Binding DataType}" HorizontalAlignment="Left" VerticalAlignment="Center" ></TextBlock>
+                        <TextBlock Grid.Column="2" Margin="10,0" Text="{Binding Name}" HorizontalAlignment="Left" VerticalAlignment="Center" IsTextSelectionEnabled="True" ></TextBlock>
+                        <TextBox Grid.Column="3"  Margin="10,0" Text="{Binding Value, Mode=TwoWay}" HorizontalAlignment="Left" VerticalAlignment="Center"></TextBox>
                     </Grid>
                 </DataTemplate>
-            </GridView.ItemTemplate>
-            <GridView.ItemsPanel>
+            </ListView.ItemTemplate>
+            <ListView.ItemsPanel>
                 <ItemsPanelTemplate>
-                    <StackPanel Orientation="Vertical" HorizontalAlignment="Left"></StackPanel>
+                    <StackPanel Orientation="Vertical" HorizontalAlignment="Left" ></StackPanel>
                 </ItemsPanelTemplate>
-            </GridView.ItemsPanel>
-            <GridView.HeaderTemplate>
+            </ListView.ItemsPanel>
+            <ListView.HeaderTemplate>
                 <DataTemplate>
-                    <Grid Background="LightGray"  VerticalAlignment="Center">
+                    <Grid VerticalAlignment="Center">
                         <TextBlock Text="{Binding Title}" Margin="10,0" HorizontalAlignment="Center"
                                    Foreground="Black" 
                                    Style="{StaticResource TitleTextBlockStyle}"/>
                     </Grid>
                 </DataTemplate>
-            </GridView.HeaderTemplate>
+            </ListView.HeaderTemplate>
 
-        </GridView>
+        </ListView>
     </Grid>
 </Page>
